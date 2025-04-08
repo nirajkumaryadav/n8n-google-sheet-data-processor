@@ -1,0 +1,341 @@
+{
+  "name": "Google Sheet Data Processor",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        0
+      ],
+      "id": "34ece5dd-396d-4ea5-867d-c4214c382b68",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1esoxyKdnTLwFaFvO-R8lIqh1QomQwkt-fquBT5H5q8k",
+          "mode": "list",
+          "cachedResultName": "Copy of Main Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1esoxyKdnTLwFaFvO-R8lIqh1QomQwkt-fquBT5H5q8k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1esoxyKdnTLwFaFvO-R8lIqh1QomQwkt-fquBT5H5q8k/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        120,
+        0
+      ],
+      "id": "5c4a3941-930f-4758-88b5-0805007b4102",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7DrCloGsMI3FcZoF",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process rows and add Additional Data column\nconst items = $input.all();\nreturn items.map(item => {\n  const row = item.json;\n  \n  // Find the email (assuming column name is Email)\n  const email = row.Email || '';\n  \n  // Extract prefix (everything before @)\n  const prefix = email.split('@')[0] || '';\n  \n  // Add new column\n  row[\"Additional Data\"] = prefix;\n  \n  return {\n    json: row\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        360,
+        0
+      ],
+      "id": "3f04ad9e-e70e-4892-b5aa-a7481b25d988",
+      "name": "Extract Email Prefix"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1esoxyKdnTLwFaFvO-R8lIqh1QomQwkt-fquBT5H5q8k",
+          "mode": "list",
+          "cachedResultName": "Copy of Main Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1esoxyKdnTLwFaFvO-R8lIqh1QomQwkt-fquBT5H5q8k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1esoxyKdnTLwFaFvO-R8lIqh1QomQwkt-fquBT5H5q8k/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "noteasytodecide@gmail.com",
+            "Data 2": "34vqewcr",
+            "Data 1": "dfsgagqr",
+            "Data 3 ": "f gadf"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Data 1",
+              "displayName": "Data 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data 2",
+              "displayName": "Data 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data 3 ",
+              "displayName": "Data 3 ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        0
+      ],
+      "id": "16f57cb8-6781-4fda-b915-b6a2b336995a",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7DrCloGsMI3FcZoF",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        800,
+        0
+      ],
+      "id": "a069cc31-fa51-46ef-b2b5-7016fc4d8670",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        0
+      ],
+      "id": "11ab2630-b90e-4040-8057-155a9d390030"
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "title": "=Data for {{$json.Name}}",
+        "sheetsUi": {
+          "sheetValues": [
+            {
+              "title": "\"User Data\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        300
+      ],
+      "id": "34ed33ef-0fb4-498d-a5c4-67e592b52856",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7DrCloGsMI3FcZoF",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v3/files/{{$json.spreadsheetId}}/permissions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"role\": \"reader\",\n  \"type\": \"user\",\n  \"emailAddress\": \"your-actual-email@gmail.com\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        280,
+        300
+      ],
+      "id": "4c61d67a-18ed-4e10-a846-813886263368",
+      "name": "Share Sheet API Call",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "mEL5Ucop5R8Wu4xE",
+          "name": "Unnamed credential"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Test workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Extract Email Prefix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Email Prefix": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Share Sheet API Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1fcc5989-3f22-4c08-a9b6-8f63a43ace9c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8523a751e91d6d85589d4189b50b7743023b61920ecfff2552784ec26f682f31"
+  },
+  "id": "VeCtTOX1gPIjcrDZ",
+  "tags": []
+}
